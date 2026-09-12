@@ -1,5 +1,6 @@
 #![forbid(unsafe_code)]
-//! Library entry point for an Xmip component.
+//! Authorize by location: decides by whether this Location admits this identity at all; a
+//! transport-layer policy.
 //!
-//! Replace this template documentation only after the repository responsibility,
-//! public contracts and dependency direction are accepted in the Xmip architecture.
+//! Declared and not yet written: `architecture.toml` carries the maturity. When it
+//! is, it implements `Authorizer` (ADR-0050).
