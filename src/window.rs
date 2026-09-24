@@ -8,8 +8,10 @@
 
 use std::fmt;
 
+use codec::civil::{self, SECONDS_A_DAY};
+
 /// Seconds in one day.
-const DAY: i128 = 86_400;
+const DAY: i128 = SECONDS_A_DAY as i128;
 
 /// Nanoseconds in one second.
 const SECOND: i128 = 1_000_000_000;
@@ -29,12 +31,12 @@ pub enum Weekday {
 }
 
 impl Weekday {
-    /// The day an instant in unix nanoseconds falls on, UTC. 1970-01-01 was a
-    /// Thursday.
+    /// The day an instant in unix nanoseconds falls on, UTC, by the civil
+    /// calendar's weekday.
     #[must_use]
     pub fn of(unix_nanos: i128) -> Self {
-        let days = (unix_nanos / SECOND).div_euclid(DAY);
-        match (days + 3).rem_euclid(7) {
+        let days = i64::try_from((unix_nanos / SECOND).div_euclid(DAY)).unwrap_or(0);
+        match civil::weekday(days) {
             0 => Self::Monday,
             1 => Self::Tuesday,
             2 => Self::Wednesday,
