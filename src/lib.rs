@@ -93,7 +93,7 @@ impl Admission {
         self
     }
 
-    /// Admit an identity by the value the gate recorded — `CN=partner-x.example`,
+    /// Admit an identity by the value the gate recorded — `CN=party-x.example`,
     /// a username — whether or not it resolved to a Party.
     #[must_use]
     pub fn identity(mut self, value: impl Into<String>) -> Self {
@@ -237,7 +237,7 @@ mod tests {
     fn tls(party: Option<PartyId>) -> IdentityFacts {
         let identity = AuthenticatedIdentity::new(
             mechanism::mutual_tls(),
-            "CN=partner-x.example",
+            "CN=party-x.example",
             Established::Passed,
             Verified::Proven,
         );
@@ -251,15 +251,15 @@ mod tests {
 
     fn policy() -> LocationPolicy {
         LocationPolicy::new()
-            .admit(Admission::receive("partner-x").party(PartyId::new(1)))
-            .admit(Admission::send("Billing").identity("CN=partner-x.example"))
+            .admit(Admission::receive("party-x").party(PartyId::new(1)))
+            .admit(Admission::send("Billing").identity("CN=party-x.example"))
     }
 
     #[test]
     fn a_party_the_location_names_is_admitted() {
         let decision = policy().decide(
             &tls(Some(PartyId::new(1))),
-            &Attempt::new(Action::Receive, "partner-x"),
+            &Attempt::new(Action::Receive, "party-x"),
         );
 
         assert_eq!(decision, Some(Decision::Allowed));
@@ -272,14 +272,14 @@ mod tests {
         let decision = policy()
             .decide(
                 &tls(Some(PartyId::new(2))),
-                &Attempt::new(Action::Receive, "partner-x"),
+                &Attempt::new(Action::Receive, "party-x"),
             )
             .expect("an opinion");
 
         assert_eq!(
             decision.to_string(),
-            "denied by location: 'partner-x' does not admit \
-             mutual-tls=CN=partner-x.example, resolved to Party \
+            "denied by location: 'party-x' does not admit \
+             mutual-tls=CN=party-x.example, resolved to Party \
              00000000-0000-0000-0000-000000000002"
         );
     }
@@ -291,11 +291,11 @@ mod tests {
         let facts = tls(Some(PartyId::new(1)));
 
         assert_eq!(
-            policy().decide(&facts, &Attempt::new(Action::Receive, "partner-y")),
+            policy().decide(&facts, &Attempt::new(Action::Receive, "party-y")),
             None
         );
         assert_eq!(
-            policy().decide(&facts, &Attempt::new(Action::Process, "partner-x")),
+            policy().decide(&facts, &Attempt::new(Action::Process, "party-x")),
             None
         );
     }
@@ -313,10 +313,10 @@ mod tests {
         );
         assert_eq!(
             policy()
-                .decide(&facts, &Attempt::new(Action::Receive, "partner-x"))
+                .decide(&facts, &Attempt::new(Action::Receive, "party-x"))
                 .expect("an opinion")
                 .to_string(),
-            "denied by location: 'partner-x' does not admit mutual-tls=CN=partner-x.example"
+            "denied by location: 'party-x' does not admit mutual-tls=CN=party-x.example"
         );
     }
 
