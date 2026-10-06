@@ -12,7 +12,7 @@
 //! or anyone the gates authenticated — and the hours it keeps.
 //!
 //! The policy speaks only for the Locations it names. An attempt on any other
-//! artifact, or on an Xmip Process, is no opinion and the next policy's
+//! artifact, or on a Work Process, is no opinion and the next policy's
 //! question. Where it does speak, the identity it judges is the accountable
 //! one — the transport identity — because transport authorization answers
 //! whether this connection may post here at all (ADR-0019 clause 6). An
@@ -31,7 +31,7 @@ pub use window::{Moment, Weekday, Window, WindowError};
 /// The manifest leaf, and the name a denial carries.
 pub const NAME: &str = "location";
 
-/// Which way a Location works. An Xmip Process is not a Location, so
+/// Which way a Location works. A Work Process is not a Location, so
 /// [`Action::Process`] has no direction here.
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum Direction {
