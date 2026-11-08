@@ -259,7 +259,7 @@ mod tests {
     fn a_party_the_location_names_is_admitted() {
         let decision = policy().decide(
             &tls(Some(PartyId::new(1))),
-            &Attempt::new(Action::Receive, "party-x"),
+            &Attempt::now(Action::Receive, "party-x"),
         );
 
         assert_eq!(decision, Some(Decision::Allowed));
@@ -272,7 +272,7 @@ mod tests {
         let decision = policy()
             .decide(
                 &tls(Some(PartyId::new(2))),
-                &Attempt::new(Action::Receive, "party-x"),
+                &Attempt::now(Action::Receive, "party-x"),
             )
             .expect("an opinion");
 
@@ -291,11 +291,11 @@ mod tests {
         let facts = tls(Some(PartyId::new(1)));
 
         assert_eq!(
-            policy().decide(&facts, &Attempt::new(Action::Receive, "party-y")),
+            policy().decide(&facts, &Attempt::now(Action::Receive, "party-y")),
             None
         );
         assert_eq!(
-            policy().decide(&facts, &Attempt::new(Action::Process, "party-x")),
+            policy().decide(&facts, &Attempt::now(Action::Process, "party-x")),
             None
         );
     }
@@ -308,12 +308,12 @@ mod tests {
         let facts = tls(None);
 
         assert_eq!(
-            policy().decide(&facts, &Attempt::new(Action::Send, "Billing")),
+            policy().decide(&facts, &Attempt::now(Action::Send, "Billing")),
             Some(Decision::Allowed)
         );
         assert_eq!(
             policy()
-                .decide(&facts, &Attempt::new(Action::Receive, "party-x"))
+                .decide(&facts, &Attempt::now(Action::Receive, "party-x"))
                 .expect("an opinion")
                 .to_string(),
             "denied by location: 'party-x' does not admit mutual-tls=CN=party-x.example"
@@ -329,7 +329,9 @@ mod tests {
         let policy =
             LocationPolicy::new().admit(Admission::receive("orders").anyone().open(office));
         let facts = tls(None);
-        let attempt = |at: i128| Attempt::new(Action::Receive, "orders").at(at);
+        // At a time of day the test picks, and at no time at all (0): the
+        // refusal of an attempt that does not say when it is made.
+        let attempt = |at: i128| Attempt::new(Action::Receive, "orders", at);
 
         assert_eq!(
             policy.decide(&facts, &attempt(10 * HOUR)),
