@@ -153,7 +153,7 @@ impl Admission {
         }
 
         let hours: Vec<String> = self.hours.iter().map(ToString::to_string).collect();
-        let now = Moment::of(at).map(|m| m.to_string()).unwrap_or_default();
+        let now = Moment::of(at).map_or_default(|m| m.to_string());
 
         Some(format!(
             "'{}' is closed at {now}; open {}",
@@ -211,8 +211,7 @@ impl Authorizer for LocationPolicy {
 
         let party = accountable
             .party_id
-            .map(|party| format!(", resolved to Party {party}"))
-            .unwrap_or_default();
+            .map_or_default(|party| format!(", resolved to Party {party}"));
 
         Some(Decision::denied(
             NAME,
